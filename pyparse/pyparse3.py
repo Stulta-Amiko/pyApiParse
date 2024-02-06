@@ -33,14 +33,30 @@ for code in tmnCdList:
     if(len(routeResponse_json['response']['body']['items'])):
         if(not isinstance(routeResponse_json['response']['body']['items']['item'],list)):
             routeData = routeResponse_json['response']['body']['items']['item'] 
-            print(routeData)
             arrCd = routeData['arrTmnCd']
             url2 = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
             res2 = requests.get(url2)
             res_json2 = json.loads(res2.content)
-            print(res_json2['response']['body']['items']['item'])
-            #rowData = [code,routeData['arrTmnCd'],routeData['arrTmnNm']]
-            #resultData.append(rowData)
+            if(res_json2['response']['body']['items']):
+                if(not isinstance(res_json2['response']['body']['items']['item'],list)):
+                    detailedRoute = res_json2['response']['body']['items']['item']
+                else:
+                    detailedRoute = res_json2['response']['body']['items']['item'][0]
+                tripTime = int(detailedRoute['arrPlandTime']) - int(detailedRoute['depPlandTime'])
+                tripHour = (tripTime//100 if (tripTime / 100) > 1 else 0)
+                if ((tripTime%100)>=60) :
+                    tripMin = (tripTime % 100) - 40
+                else:
+                    tripMin = tripTime % 100 
+                charge = 0
+                if  'charge' in detailedRoute:
+                    charge = detailedRoute['charge']
+                totalMin = (tripHour*60) + tripMin
+                chargeWon = str(charge) + '원'
+                departTerminal = detailedRoute['depPlaceNm']
+                arriveTerminal = detailedRoute['arrPlaceNm']
+                rowData = [code,departTerminal,arrCd,arriveTerminal,tripHour,tripMin,totalMin,charge]
+                resultData.append(rowData)
         else:
             routeData = routeResponse_json['response']['body']['items']['item']
             for item in routeData:
@@ -48,14 +64,28 @@ for code in tmnCdList:
                 url2 = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
                 res2 = requests.get(url2)
                 res_json2 = json.loads(res2.content)
-                print(res_json2['response']['body']['items']['item'])
-                #rowData = [code,item['arrTmnCd'],item['arrTmnNm']]
-                #resultData.append(rowData)
+                if(res_json2['response']['body']['items']):
+                    if(not isinstance(res_json2['response']['body']['items']['item'],list)):
+                        detailedRoute = res_json2['response']['body']['items']['item']
+                    else:
+                        detailedRoute = res_json2['response']['body']['items']['item'][0] 
+                    tripTime = int(detailedRoute['arrPlandTime']) - int(detailedRoute['depPlandTime'])
+                    tripHour = (tripTime//100 if (tripTime / 100) > 1 else 0)
+                    if ((tripTime%100)>=60) :
+                        tripMin = (tripTime % 100) - 40
+                    else:
+                        tripMin = tripTime % 100 
+                    charge = 0
+                    if  'charge' in detailedRoute:
+                        charge = detailedRoute['charge']
+                    totalMin = (tripHour*60) + tripMin
+                    totalTrip = str(tripHour) + '시간 ' + str(tripMin) + '분'
+                    departTerminal = detailedRoute['depPlaceNm']
+                    arriveTerminal = detailedRoute['arrPlaceNm']
+                    rowData = [code,departTerminal,arrCd,arriveTerminal,totalTrip,totalMin,charge]
+                    resultData.append(rowData)
 
-'''    
-resultDf = pd.DataFrame(resultData,columns=['departTmnCd','arriveTmnCd','arriveTmnNm'])
+resultDf = pd.DataFrame(resultData,columns=['departTmnCd','departTmnNm','arriveTmnCd','arriveTmnNm','totalTrip','totalMin','charge'])
 print(resultDf)
 
 resultDf.to_csv('Terminal_Route_detailed.csv',encoding='utf-8')
-
-'''
