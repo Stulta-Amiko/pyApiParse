@@ -45,5 +45,5 @@ for code in tmnCdList:
 resultDf = pd.DataFrame(resultData,columns=['departTmnCd','arriveTmnCd','arriveTmnNm'])
 print(resultDf)
 
-resultDf.to_csv('Terminal_Route.csv',encoding='utf-8')
+resultDf.to_csv('./data/Terminal_Route.csv',encoding='utf-8')
 

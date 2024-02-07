@@ -34,16 +34,16 @@ for code in tmnCdList:
         if(not isinstance(routeResponse_json['response']['body']['items']['item'],list)):
             routeData = routeResponse_json['response']['body']['items']['item'] 
             arrCd = routeData['arrTmnCd']
-            url2 = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
-            res2 = requests.get(url2)
-            res_json2 = json.loads(res2.content)
-            if(res_json2['response']['body']['items']):
-                if(not isinstance(res_json2['response']['body']['items']['item'],list)):
-                    detailedRoute = res_json2['response']['body']['items']['item']
+            detailUrl = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
+            detailRes = requests.get(detailUrl)
+            detailRes_json = json.loads(detailRes.content)
+            if(detailRes_json['response']['body']['items']):
+                if(not isinstance(detailRes_json['response']['body']['items']['item'],list)):
+                    detailedRoute = detailRes_json['response']['body']['items']['item']
                 else:
-                    detailedRoute = res_json2['response']['body']['items']['item'][0]
+                    detailedRoute = detailRes_json['response']['body']['items']['item'][0]
                 tripTime = int(detailedRoute['arrPlandTime']) - int(detailedRoute['depPlandTime'])
-                tripHour = (tripTime//100 if (tripTime / 100) > 1 else 0)
+                tripHour = (tripTime//100 if (tripTime / 100) >= 1 else 0)
                 if ((tripTime%100)>=60) :
                     tripMin = (tripTime % 100) - 40
                 else:
@@ -52,25 +52,28 @@ for code in tmnCdList:
                 if  'charge' in detailedRoute:
                     charge = detailedRoute['charge']
                 totalMin = (tripHour*60) + tripMin
-                chargeWon = str(charge) + '원'
+                if 'arrPlaceNm' in detailedRoute:
+                       arriveTerminal = detailedRoute['arrPlaceNm']
+                else:
+                    arrCdIndex = tmnCdList.index(arrCd)
+                    arriveTerminal = tmnNmList[arrCdIndex] 
                 departTerminal = detailedRoute['depPlaceNm']
-                arriveTerminal = detailedRoute['arrPlaceNm']
-                rowData = [code,departTerminal,arrCd,arriveTerminal,tripHour,tripMin,totalMin,charge]
+                rowData = [code,departTerminal,arrCd,arriveTerminal,totalTrip,totalMin,charge]
                 resultData.append(rowData)
         else:
             routeData = routeResponse_json['response']['body']['items']['item']
             for item in routeData:
                 arrCd = item['arrTmnCd']
-                url2 = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
-                res2 = requests.get(url2)
-                res_json2 = json.loads(res2.content)
-                if(res_json2['response']['body']['items']):
-                    if(not isinstance(res_json2['response']['body']['items']['item'],list)):
-                        detailedRoute = res_json2['response']['body']['items']['item']
+                detailUrl = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
+                detailRes = requests.get(detailUrl)
+                detailRes_json = json.loads(detailRes.content)
+                if(detailRes_json['response']['body']['items']):
+                    if(not isinstance(detailRes_json['response']['body']['items']['item'],list)):
+                        detailedRoute = detailRes_json['response']['body']['items']['item']
                     else:
-                        detailedRoute = res_json2['response']['body']['items']['item'][0] 
+                        detailedRoute = detailRes_json['response']['body']['items']['item'][0] 
                     tripTime = int(detailedRoute['arrPlandTime']) - int(detailedRoute['depPlandTime'])
-                    tripHour = (tripTime//100 if (tripTime / 100) > 1 else 0)
+                    tripHour = (tripTime//100 if (tripTime / 100) >= 1 else 0)
                     if ((tripTime%100)>=60) :
                         tripMin = (tripTime % 100) - 40
                     else:
@@ -80,12 +83,16 @@ for code in tmnCdList:
                         charge = detailedRoute['charge']
                     totalMin = (tripHour*60) + tripMin
                     totalTrip = str(tripHour) + '시간 ' + str(tripMin) + '분'
+                    if 'arrPlaceNm' in detailedRoute:
+                       arriveTerminal = detailedRoute['arrPlaceNm']
+                    else:
+                        arrCdIndex = tmnCdList.index(arrCd)
+                        arriveTerminal = tmnNmList[arrCdIndex] 
                     departTerminal = detailedRoute['depPlaceNm']
-                    arriveTerminal = detailedRoute['arrPlaceNm']
                     rowData = [code,departTerminal,arrCd,arriveTerminal,totalTrip,totalMin,charge]
                     resultData.append(rowData)
 
 resultDf = pd.DataFrame(resultData,columns=['departTmnCd','departTmnNm','arriveTmnCd','arriveTmnNm','totalTrip','totalMin','charge'])
 print(resultDf)
 
-resultDf.to_csv('Terminal_Route_detailed.csv',encoding='utf-8')
+resultDf.to_csv('./data/Terminal_Route_detailed.csv',encoding='utf-8')

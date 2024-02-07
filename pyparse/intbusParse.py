@@ -36,5 +36,5 @@ for terminalId,terminalNm,terminalRegion in zip(tmnIdList,tmnNmList,tmnRegionLis
 resultDf = pd.DataFrame(resultData,columns=['terminalId','terminalNm','Region'])
 print(resultDf)
 
-resultDf.to_csv('Terminal_List_Interbus.csv',encoding='utf-8')
+resultDf.to_csv('./data/Terminal_List_Interbus.csv',encoding='utf-8')
 
