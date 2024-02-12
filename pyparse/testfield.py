@@ -1,6 +1,3 @@
-from datetime import datetime
+import ssl
 
-tripTime = 100
-tripHour = (tripTime//100 if (tripTime / 100) >= 1 else 0)
-
-print(tripHour)
+print(ssl.OPENSSL_VERSION)
