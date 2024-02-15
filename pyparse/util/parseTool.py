@@ -1,11 +1,12 @@
 
 
 
-def jsonHandler(resJson, code, tmnNmList, tmnIDList, url):
-    routeData = resJson['response']['body']['items']['item']
-    arrTer = []
-    for item in routeData:
-        try:
+def jsonHandler(resJson, code, tmnNmList, tmnIDList):
+    resultData = list()
+    try:
+        routeData = resJson['response']['body']['items']['item']
+        arrTer = []
+        for item in routeData:
             if not(item['arrPlaceNm'] in arrTer):
                 arrTer.append(item['arrPlaceNm'])
                 depterminalName = item['depPlaceNm']
@@ -33,10 +34,9 @@ def jsonHandler(resJson, code, tmnNmList, tmnIDList, url):
                 #디버그용 print 코드
                 print('출: '+depterminalName+' '+ depterminalCode+', 도: '+arrterminalName+' '+arrterminalCode + ' 소요시간: '+str(tripHour)+'시간 '+str(tripMin)+'분 '+str(totalMin)+'분 금액'+str(charge)+' 원 ')
                 rowData = [depterminalCode,depterminalName,arrterminalCode,arrterminalName,totalMin,charge]
-                return rowData
-                #resultData.append(rowData)
-        except Exception as e:    
-            print('catch: ', e)
-            print('item' + item)
-            print('code: '+code)
-            print('url' + url) 
+                resultData.append(rowData)
+    except Exception as e:
+        print('catch: ', e)
+        print('item' + item)
+        print('code: '+code)
+    return resultData
