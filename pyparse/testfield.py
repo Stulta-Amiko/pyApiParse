@@ -1,14 +1,11 @@
-import ssl
+import re
+import os
+files = os.listdir('./data/inter/')
 
-result = list()
+#파일명 출력하기
+find = list()
+for file in files :
+    numbers = re.sub(r'[^0-9]', '', file)
+    find.append(numbers)
 
-a = [[1,2,'2'],[3,4,'5']]
-b = [[5,6,'6'],[6,7,[7]]]
-
-for item in a:
-    result.append(item)
-
-for item in b:
-    result.append(item)
-
-print(result)
+print(max(find))

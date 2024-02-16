@@ -58,7 +58,7 @@ for code in tmnCdList:
                     arrCdIndex = tmnCdList.index(arrCd)
                     arriveTerminal = tmnNmList[arrCdIndex] 
                 departTerminal = detailedRoute['depPlaceNm']
-                rowData = [code,departTerminal,arrCd,arriveTerminal,totalTrip,totalMin,charge]
+                rowData = [code,departTerminal,arrCd,arriveTerminal,totalMin,charge]
                 resultData.append(rowData)
         else:
             routeData = routeResponse_json['response']['body']['items']['item']
@@ -89,10 +89,10 @@ for code in tmnCdList:
                         arrCdIndex = tmnCdList.index(arrCd)
                         arriveTerminal = tmnNmList[arrCdIndex] 
                     departTerminal = detailedRoute['depPlaceNm']
-                    rowData = [code,departTerminal,arrCd,arriveTerminal,totalTrip,totalMin,charge]
+                    rowData = [code,departTerminal,arrCd,arriveTerminal,totalMin,charge]
                     resultData.append(rowData)
 
-resultDf = pd.DataFrame(resultData,columns=['departTmnCd','departTmnNm','arriveTmnCd','arriveTmnNm','totalTrip','totalMin','charge'])
+resultDf = pd.DataFrame(resultData,columns=['departTmnCd','departTmnNm','arriveTmnCd','arriveTmnNm','totalMin','charge'])
 print(resultDf)
 
-resultDf.to_csv('./data/Terminal_Route_detailed.csv',encoding='utf-8')
+resultDf.to_csv('./data/Express_Bus_Route_Detailed.csv',encoding='utf-8')
