@@ -57,3 +57,35 @@ def jsonHandler(resJson, code, tmnNmList, tmnIDList):
         print('item' + item)
         print('code: '+code)
     return resultData
+
+
+
+def expJsonHandler(resJson, code):
+    routeData = resJson['response']['body']['items']['item'] 
+    arrCd = routeData['arrTmnCd']
+    detailUrl = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
+    detailRes = requests.get(detailUrl)
+    detailRes_json = json.loads(detailRes.content)
+    if(detailRes_json['response']['body']['items']):
+        if(not isinstance(detailRes_json['response']['body']['items']['item'],list)):
+            detailedRoute = detailRes_json['response']['body']['items']['item']
+        else:
+            detailedRoute = detailRes_json['response']['body']['items']['item'][0]
+        tripTime = int(detailedRoute['arrPlandTime']) - int(detailedRoute['depPlandTime'])
+        tripHour = (tripTime//100 if (tripTime / 100) >= 1 else 0)
+        if ((tripTime%100)>=60) :
+            tripMin = (tripTime % 100) - 40
+        else:
+            tripMin = tripTime % 100 
+        charge = 0
+        if  'charge' in detailedRoute:
+            charge = detailedRoute['charge']
+        totalMin = (tripHour*60) + tripMin
+        if 'arrPlaceNm' in detailedRoute:
+                arriveTerminal = detailedRoute['arrPlaceNm']
+        else:
+            arrCdIndex = tmnCdList.index(arrCd)
+            arriveTerminal = tmnNmList[arrCdIndex] 
+        departTerminal = detailedRoute['depPlaceNm']
+        rowData = [code,departTerminal,arrCd,arriveTerminal,totalMin,charge]
+        resultData.append(rowData)
