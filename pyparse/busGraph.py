@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import csv
 import os
+from util import findTerminal
 
 if not (os.path.isdir('./data')):
     os.makedirs('./data/graph')
@@ -45,16 +46,21 @@ else:
 weight = nx.get_edge_attributes(G, 'weight')
 relation = nx.get_edge_attributes(G, 'relation')
 
-path = nx.astar_path(G, '춘천', '충주', heuristic=None, weight='weight')
-length = nx.astar_path_length(G,'춘천', '충주', heuristic=None, weight='weight')
-print("Path: ", path)
-print("Path length: ", length)
+exitcode = 1
 
-'''
-nx.draw(G,pos,with_labels=True,font_family='AppleGothic', font_size=10)
-nx.draw_networkx_edge_labels(G,pos, edge_labels=weight)
-'''
+print('종료하시려면 출/도착지 입력시 0을 눌러주세요')
 
-plt.show()
+while(exitcode == 1):
+    
+    depart = findTerminal.find('출발')
+    if depart == 0:
+        exitcode = 0
+    arrive = findTerminal.find('도착')
+    if arrive == 0:
+        exitcode = 0
 
+    path = nx.astar_path(G, depart, arrive, heuristic=None, weight='weight')
+    length = nx.astar_path_length(G,depart, arrive, heuristic=None, weight='weight')
+    print("Path: ", path)
+    print("Path length: ", length)
 

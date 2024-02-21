@@ -1,4 +1,3 @@
-import os
+from util import findTerminal
 
-if os.path.isfile('./ExpressbusRouteParse.py'):
-    print(os.path.isfile('./ExpressbusRouteParse1.py'))
+print(findTerminal.findTerminal())
