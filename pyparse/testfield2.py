@@ -2,7 +2,7 @@ import os
 import csv
 import pandas as pd
 
-f = open('./omission_new.csv','r')
+f = open('./data/omission_new2.csv','r')
 rdr = csv.reader(f)
 lines = []
 
@@ -18,7 +18,7 @@ for line in rdr:
     lines.append(line)
     
  
-f = open('omission_new2.csv','w',newline='') #원본을 훼손할 위험이 있으니 다른 파일에 저장하는 것을 추천합니다.
+f = open('omission_new3.csv','w',newline='') #원본을 훼손할 위험이 있으니 다른 파일에 저장하는 것을 추천합니다.
 wr = csv.writer(f)
 wr.writerows(lines)
  

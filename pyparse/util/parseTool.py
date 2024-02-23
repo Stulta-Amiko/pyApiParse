@@ -59,33 +59,29 @@ def jsonHandler(resJson, code, tmnNmList, tmnIDList):
     return resultData
 
 
-
-def expJsonHandler(resJson, code):
-    routeData = resJson['response']['body']['items']['item'] 
-    arrCd = routeData['arrTmnCd']
-    detailUrl = 'https://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo?'+my_key+params+'&depTerminalId=NAEK'+ str(code) +'&arrTerminalId=NAEK'+ str(arrCd) +'&depPlandTime='+today
-    detailRes = requests.get(detailUrl)
-    detailRes_json = json.loads(detailRes.content)
-    if(detailRes_json['response']['body']['items']):
-        if(not isinstance(detailRes_json['response']['body']['items']['item'],list)):
-            detailedRoute = detailRes_json['response']['body']['items']['item']
-        else:
-            detailedRoute = detailRes_json['response']['body']['items']['item'][0]
-        tripTime = int(detailedRoute['arrPlandTime']) - int(detailedRoute['depPlandTime'])
-        tripHour = (tripTime//100 if (tripTime / 100) >= 1 else 0)
-        if ((tripTime%100)>=60) :
-            tripMin = (tripTime % 100) - 40
-        else:
-            tripMin = tripTime % 100 
-        charge = 0
-        if  'charge' in detailedRoute:
-            charge = detailedRoute['charge']
-        totalMin = (tripHour*60) + tripMin
-        if 'arrPlaceNm' in detailedRoute:
-                arriveTerminal = detailedRoute['arrPlaceNm']
-        else:
-            arrCdIndex = tmnCdList.index(arrCd)
-            arriveTerminal = tmnNmList[arrCdIndex] 
-        departTerminal = detailedRoute['depPlaceNm']
-        rowData = [code,departTerminal,arrCd,arriveTerminal,totalMin,charge]
-        resultData.append(rowData)
+def expJsonHandler(detailItem,tmnCdList,tmnNmList,code,arrCd):
+    departTime = int(detailItem['depPlandTime']) % 10000
+    departHour = departTime//100
+    departMin = departTime%100
+    arriveTime = int(detailItem['arrPlandTime']) % 10000
+    arriveHour = arriveTime//100
+    arriveMin = arriveTime%100
+    tripTime = int(detailItem['arrPlandTime']) - int(detailItem['depPlandTime'])
+    tripHour = (tripTime//100 if (tripTime / 100) >= 1 else 0)
+    if ((tripTime%100)>=60) :
+        tripMin = (tripTime % 100) - 40
+    else:
+        tripMin = tripTime % 100 
+    charge = 0
+    if  'charge' in detailItem:
+        charge = detailItem['charge']
+    totalMin = (tripHour*60) + tripMin
+    totalTrip = str(tripHour) + '시간 ' + str(tripMin) + '분'
+    if 'arrPlaceNm' in detailItem:
+        arriveTerminal = detailItem['arrPlaceNm']
+    else:
+        arrCdIndex = tmnCdList.index(arrCd)
+        arriveTerminal = tmnNmList[arrCdIndex] 
+    departTerminal = detailItem['depPlaceNm']
+    rowData = [code,departTerminal,departHour,departMin,arrCd,arriveTerminal,arriveHour,arriveMin,totalTrip,totalMin,charge]
+    return rowData

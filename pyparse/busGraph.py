@@ -61,6 +61,14 @@ while(exitcode == 1):
 
     path = nx.astar_path(G, depart, arrive, heuristic=None, weight='weight')
     length = nx.astar_path_length(G,depart, arrive, heuristic=None, weight='weight')
-    print("Path: ", path)
+    for index,route in enumerate(path):
+        if len(path) - 1 > index:
+            print(path[index]+'-'+path[index+1])
+    tripHour = length // 60
+    tripMin  = length % 60
+    if length < 1:
+        print('소요시간 ' + str(int(tripMin)) + '분')
+    else:
+        print('소요시간 ' + str(int(tripHour)) + '시간 ' +str(int(tripMin)) + '분') 
     print("Path length: ", length)
 
