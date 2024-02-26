@@ -60,10 +60,10 @@ def jsonHandler(resJson, code, tmnNmList, tmnIDList):
 
 
 def expJsonHandler(detailItem,tmnCdList,tmnNmList,code,arrCd):
-    departTime = int(detailItem['depPlandTime']) % 10000
+    departTime = detailItem['depPlandTime'] % 10000
     departHour = departTime//100
     departMin = departTime%100
-    arriveTime = int(detailItem['arrPlandTime']) % 10000
+    arriveTime = detailItem['arrPlandTime'] % 10000
     arriveHour = arriveTime//100
     arriveMin = arriveTime%100
     tripTime = int(detailItem['arrPlandTime']) - int(detailItem['depPlandTime'])
@@ -83,5 +83,5 @@ def expJsonHandler(detailItem,tmnCdList,tmnNmList,code,arrCd):
         arrCdIndex = tmnCdList.index(arrCd)
         arriveTerminal = tmnNmList[arrCdIndex] 
     departTerminal = detailItem['depPlaceNm']
-    rowData = [code,departTerminal,departHour,departMin,arrCd,arriveTerminal,arriveHour,arriveMin,totalTrip,totalMin,charge]
+    rowData = [code,departTerminal,departHour,departMin,arrCd,arriveTerminal,arriveHour,arriveMin,totalMin,charge]
     return rowData
