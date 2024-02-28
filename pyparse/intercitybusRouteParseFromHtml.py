@@ -3,8 +3,15 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import csv
 import re
+import os
+from dotenv import load_dotenv
 
-response = requests.get("https://transportation.asamaru.net/%EC%8B%9C%EC%99%B8%EB%B2%84%EC%8A%A4/%EC%8B%9C%EA%B0%84%ED%91%9C/수원종합버스터미널/")
+load_dotenv()
+
+link = os.getenv('PARSELINK')
+
+depTmnNm = ''
+response = requests.get(link+"/"+depTmnNm+"/")
 html_data = BeautifulSoup(response.text, 'html.parser')
 terminal_names = html_data.select('caption > h3')
 tables = html_data.select('table')

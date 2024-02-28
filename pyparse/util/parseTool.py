@@ -159,3 +159,62 @@ def expJsonHandler(detailItem,tmnCdList,tmnNmList,code,arrCd):
     departTerminal = detailItem['depPlaceNm']
     rowData = [code,departTerminal,departHour,departMin,arrCd,arriveTerminal,arriveHour,arriveMin,totalMin,charge]
     return rowData
+
+def terminalNametoFlat(name):
+    a = name
+
+    if '대전청사둔산' in a:
+        a = a.replace('대전청사둔산','대전청사')
+
+    if '공동' in a:
+        a = a.replace('공동','')
+
+    if '혁신도시(충북)' in a:
+        a = a.replace('혁신도시(충북)','충북혁신도시')
+
+    if '동해시' in a:
+        a = a.replace('동해시','동해')
+
+    if '인천공항터미널' in a:
+        a = a.replace('인천공항터미널','인천공항1터미널')
+    
+    if '혁신도시간이정류소(전북)' in a:
+        a = a.replace('혁신도시간이정류소(전북)','전북(완주)혁신도시')
+    
+    if '청주여객북부' in a:
+        a = a.replace('청주여객북부','북청주')
+
+    if '여객' in a:
+        a = a.replace('여객','')
+
+    if '시외' in a:
+        a = a.replace('시외','')
+
+    if '고속' in a:
+        a = a.replace('고속','')
+
+    if '정류소' in a:
+        a = a.replace('정류소','')
+
+    if '정류장' in a:
+        a = a.replace('정류장','')
+
+    if '공용' in a:
+        a = a.replace('공용','')
+
+    if '종합' in a:
+        a = a.replace('종합','')
+
+    if '버스' in a:
+        a = a.replace('버스','')
+
+    if '터미널' in a:
+        a = a.replace('터미널','')
+
+    if '(상행)' in a:
+        a = a.replace('(상행)','')
+    
+    if '(하행)' in a:
+        a = a.replace('(하행)','')
+    
+    return a
