@@ -37,8 +37,10 @@ while(1):
 	for line in rdr:
 		if line[2] == departTmn:
 			departTmnCd = line[1]
-	
+
 	f.close()
+
+	departTmnCd = 'NAI5275901'
 
 	if not (os.path.isdir('./data/int_each/'+ departTmn)):
 		os.mkdir('./data/int_each/'+ departTmn)
