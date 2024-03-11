@@ -163,6 +163,12 @@ def expJsonHandler(detailItem,tmnCdList,tmnNmList,code,arrCd):
 def terminalNametoFlat(name):
     a = name
 
+    if '광주종합터미널' in a:
+        a = a.replace('광주종합터미널','광주(경기)')
+
+    if '광주종합버스터미널' in a:
+        a = a.replace('광주종합버스터미널','광주(유·스퀘어)')
+
     if '대전청사둔산' in a:
         a = a.replace('대전청사둔산','대전청사')
 
